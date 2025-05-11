@@ -31,7 +31,79 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [walletState, setWalletState] = useState<WalletState>(initialWalletState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Mock wallet connection for MVP
+  // Check if wallet was previously connected
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (typeof window !== 'undefined' && window.starknet) {
+        try {
+          // Check if wallet is already connected
+          const isPreauthorized = await window.starknet.isPreauthorized();
+          if (isPreauthorized) {
+            // User has previously connected, reconnect automatically
+            connectWallet();
+          }
+        } catch (error) {
+          console.error("Error checking wallet connection:", error);
+        }
+      }
+    };
+    
+    checkWalletConnection();
+  }, []);
+
+  // Listen for account changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.starknet) {
+      const handleAccountsChanged = (accounts: any) => {
+        if (accounts.length === 0) {
+          // User disconnected wallet
+          disconnectWallet();
+        } else if (walletState.connected) {
+          // Account changed, update state
+          updateWalletState();
+        }
+      };
+
+      // Add event listeners for wallet changes
+      window.starknet.on('accountsChanged', handleAccountsChanged);
+      
+      return () => {
+        // Remove event listeners on cleanup
+        window.starknet.removeListener('accountsChanged', handleAccountsChanged);
+      };
+    }
+  }, [walletState.connected]);
+
+  const updateWalletState = async () => {
+    try {
+      if (!window.starknet) return;
+      
+      const accounts = await window.starknet.getAccounts();
+      if (accounts.length === 0) return;
+      
+      const account = accounts[0];
+      const provider = window.starknet.provider;
+      const network = await window.starknet.provider.getChainId();
+      
+      // For MVP, we'll use mock balance data
+      // In a real app, you would get this from the blockchain
+      const mockBalance = {
+        eth: 0.5,
+        usdc: 1000
+      };
+      
+      setWalletState({
+        connected: true,
+        address: account.address,
+        provider: { type: 'argentX', instance: provider },
+        network: network,
+        balance: mockBalance
+      });
+    } catch (error) {
+      console.error("Error updating wallet state:", error);
+    }
+  };
+
   const connectWallet = async () => {
     try {
       setIsLoading(true);
@@ -41,28 +113,12 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         throw new Error('ArgentX wallet not found. Please install ArgentX extension');
       }
       
-      // Mock successful connection
-      setTimeout(() => {
-        // For MVP, we'll use a mock address
-        const mockAddress = '0x123...abc';
-        
-        setWalletState({
-          connected: true,
-          address: mockAddress,
-          provider: { type: 'argentX' },
-          network: 'testnet', // Starknet testnet
-          balance: {
-            eth: 0.5,
-            usdc: 1000
-          }
-        });
-        
-        toast.success("Wallet connected successfully", {
-          description: `Connected to ${mockAddress}`
-        });
-        
-        setIsLoading(false);
-      }, 1500);
+      // Request account connection
+      await window.starknet.enable();
+      await updateWalletState();
+      
+      toast.success("Wallet connected successfully");
+      setIsLoading(false);
     } catch (error: any) {
       console.error('Wallet connection error:', error);
       toast.error("Wallet connection failed", {
@@ -76,8 +132,6 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setWalletState(initialWalletState);
     toast.info("Wallet disconnected");
   };
-
-  // Add listeners for wallet changes here (in real implementation)
 
   return (
     <WalletContext.Provider value={{

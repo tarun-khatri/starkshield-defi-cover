@@ -34,12 +34,12 @@ const Home = () => {
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-                Buy insurance on <span className="text-gradient">ETH crashes.</span>
+                Decentralized insurance <span className="text-gradient">powered by Pragma.</span>
                 <br />
-                Or earn by <span className="text-gradient">insuring others.</span>
+                <span className="text-gradient">Protect your assets</span> against market risks.
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                DeFi Shield offers transparent on-chain coverage against price drops, powered by Pragma oracles on Starknet.
+                DeFi Shield offers transparent on-chain coverage for multiple assets, with conditions verified by Pragma's oracle network on Starknet.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -67,7 +67,7 @@ const Home = () => {
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-3xl">Popular Coverage Options</h2>
             <p className="text-muted-foreground">
-              Choose from our most popular insurance options or create your own.
+              Choose from our most popular insurance options across multiple assets.
             </p>
           </div>
           
@@ -106,7 +106,7 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Choose Coverage</h3>
               <p className="text-muted-foreground">
-                Select a pre-defined condition like "ETH drops {'>'}10% in 24h" or create your own.
+                Select a pre-defined condition like "ETH drops {'>'} 10% in 24h" or create your own.
               </p>
             </div>
             
@@ -116,7 +116,7 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Pay Premium</h3>
               <p className="text-muted-foreground">
-                Pay a small premium to get coverage. Your transaction is recorded on Starknet.
+                Pay a small premium to get coverage. Your transaction is recorded on Starknet and verified by Pragma oracles.
               </p>
             </div>
             
