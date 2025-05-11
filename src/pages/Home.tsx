@@ -106,7 +106,7 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Choose Coverage</h3>
               <p className="text-muted-foreground">
-                Select a pre-defined condition like "ETH drops >10% in 24h" or create your own.
+                Select a pre-defined condition like "ETH drops {'>'}10% in 24h" or create your own.
               </p>
             </div>
             
