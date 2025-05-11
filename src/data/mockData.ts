@@ -1,155 +1,183 @@
+import { 
+  InsurancePool, 
+  UserCoverage, 
+  UserLiquidity, 
+  PriceData 
+} from '../types';
 
-import { InsurancePool, UserCoverage, UserLiquidity, PriceData } from '../types';
+// Function to calculate premium based on payout and premium rate
+export const calculatePremium = (payout: number, premiumRate: number): number => {
+  return payout * (premiumRate / 100);
+};
 
-// Current timestamp
-const now = Date.now();
-const day = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-
-export const mockPrices: PriceData[] = [
-  { symbol: 'ETH', price: 3250, timestamp: now, change24h: -2.5 },
-  { symbol: 'BTC', price: 65000, timestamp: now, change24h: -1.2 },
-  { symbol: 'AVAX', price: 42, timestamp: now, change24h: -3.8 },
-];
-
+// Mock insurance pools
 export const mockInsurancePools: InsurancePool[] = [
   {
-    id: '1',
+    id: 'pool1',
     condition: {
       asset: 'ETH',
       conditionType: '10%',
       duration: '24h',
       description: 'ETH drops >10% in 24h'
     },
-    totalLiquidity: 50000,
-    totalCoverage: 20000,
+    totalLiquidity: 500000,
+    totalCoverage: 250000,
     activeUsers: 15,
-    premiumRate: 5, // 5% premium
-    expectedAPY: 32, // 32% APY
-    startTime: now - day, // Started 24 hours ago
-    endTime: now + day, // Ends in 24 hours
+    premiumRate: 2.5,
+    expectedAPY: 12,
+    startTime: Date.now(),
+    endTime: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+    verificationSource: 'pragma' // Adding the missing property
   },
   {
-    id: '2',
+    id: 'pool2',
     condition: {
       asset: 'BTC',
       conditionType: '10%',
       duration: '24h',
       description: 'BTC drops >10% in 24h'
     },
-    totalLiquidity: 80000,
-    totalCoverage: 35000,
+    totalLiquidity: 750000,
+    totalCoverage: 400000,
     activeUsers: 22,
-    premiumRate: 4.5, // 4.5% premium
-    expectedAPY: 28, // 28% APY
-    startTime: now - day / 2, // Started 12 hours ago
-    endTime: now + day * 1.5, // Ends in 36 hours
+    premiumRate: 2,
+    expectedAPY: 10,
+    startTime: Date.now(),
+    endTime: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+    verificationSource: 'pragma' // Adding the missing property
   },
   {
-    id: '3',
+    id: 'pool3',
     condition: {
       asset: 'ETH',
       conditionType: '15%',
       duration: '24h',
       description: 'ETH drops >15% in 24h'
     },
-    totalLiquidity: 30000,
-    totalCoverage: 12000,
+    totalLiquidity: 300000,
+    totalCoverage: 150000,
     activeUsers: 8,
-    premiumRate: 3.5, // 3.5% premium
-    expectedAPY: 22, // 22% APY
-    startTime: now - day / 4, // Started 6 hours ago
-    endTime: now + day * 0.75, // Ends in 18 hours
+    premiumRate: 1.5,
+    expectedAPY: 8,
+    startTime: Date.now(),
+    endTime: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+    verificationSource: 'pragma' // Adding the missing property
   },
   {
-    id: '4',
+    id: 'pool4',
     condition: {
       asset: 'ETH',
       conditionType: '20%',
       duration: '24h',
       description: 'ETH drops >20% in 24h'
     },
-    totalLiquidity: 25000,
-    totalCoverage: 8000,
-    activeUsers: 6,
-    premiumRate: 2.5, // 2.5% premium
-    expectedAPY: 18, // 18% APY
-    startTime: now, // Just started
-    endTime: now + day, // Ends in 24 hours
-  }
+    totalLiquidity: 200000,
+    totalCoverage: 100000,
+    activeUsers: 5,
+    premiumRate: 1,
+    expectedAPY: 6,
+    startTime: Date.now(),
+    endTime: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+    verificationSource: 'pragma' // Adding the missing property
+  },
 ];
 
+// Mock user coverages
 export const mockUserCoverages: UserCoverage[] = [
   {
-    id: 'cov1',
-    poolId: '1',
-    condition: {
-      asset: 'ETH',
-      conditionType: '10%',
-      duration: '24h',
-      description: 'ETH drops >10% in 24h'
-    },
-    premium: 5, // 5 USDC
-    payout: 100, // 100 USDC
-    startTime: now - day / 2, // Started 12 hours ago
-    endTime: now + day / 2, // Ends in 12 hours
+    id: 'coverage1',
+    poolId: 'pool1',
+    condition: mockInsurancePools[0].condition,
+    premium: 12.5,
+    payout: 500,
+    startTime: Date.now() - 3600000, // 1 hour ago
+    endTime: Date.now() + 20 * 3600000, // expires in 20 hours
     status: 'active'
   },
   {
-    id: 'cov2',
-    poolId: '3',
-    condition: {
-      asset: 'ETH',
-      conditionType: '15%',
-      duration: '24h',
-      description: 'ETH drops >15% in 24h'
-    },
-    premium: 3.5, // 3.5 USDC
-    payout: 100, // 100 USDC
-    startTime: now - day, // Started 24 hours ago
-    endTime: now, // Just ended
-    status: 'expired'
-  }
+    id: 'coverage2',
+    poolId: 'pool2',
+    condition: mockInsurancePools[1].condition,
+    premium: 8,
+    payout: 400,
+    startTime: Date.now() - 7200000, // 2 hours ago
+    endTime: Date.now() + 19 * 3600000, // expires in 19 hours
+    status: 'active'
+  },
 ];
 
+// Mock user liquidity positions
 export const mockUserLiquidityPositions: UserLiquidity[] = [
   {
-    id: 'liq1',
-    poolId: '1',
-    condition: {
-      asset: 'ETH',
-      conditionType: '10%',
-      duration: '24h',
-      description: 'ETH drops >10% in 24h'
-    },
-    stakedAmount: 1000, // 1000 USDC
-    earned: 12.5, // 12.5 USDC earned so far
-    startTime: now - day / 2, // Started 12 hours ago
-    endTime: now + day / 2, // Ends in 12 hours
+    id: 'liquidity1',
+    poolId: 'pool1',
+    condition: mockInsurancePools[0].condition,
+    stakedAmount: 1000,
+    earned: 50,
+    startTime: Date.now() - 86400000, // 24 hours ago
+    endTime: Date.now() + 86400000, // ends in 24 hours
     status: 'active'
   },
   {
-    id: 'liq2',
-    poolId: '2',
-    condition: {
-      asset: 'BTC',
-      conditionType: '10%',
-      duration: '24h',
-      description: 'BTC drops >10% in 24h'
-    },
-    stakedAmount: 500, // 500 USDC
-    earned: 15, // 15 USDC earned
-    startTime: now - day, // Started 24 hours ago
-    endTime: now, // Just ended
-    status: 'withdrawn'
-  }
+    id: 'liquidity2',
+    poolId: 'pool2',
+    condition: mockInsurancePools[1].condition,
+    stakedAmount: 2000,
+    earned: 120,
+    startTime: Date.now() - 172800000, // 48 hours ago
+    endTime: Date.now() + 43200000, // ends in 12 hours
+    status: 'active'
+  },
 ];
 
-// Mock function to calculate premium based on payout amount
-export const calculatePremium = (payout: number, rate: number): number => {
-  return (payout * rate) / 100;
-};
-
-// Mock function to fetch pool by ID
-export const getPoolById = (poolId: string): InsurancePool | undefined => {
-  return mockInsurancePools.find(pool => pool.id === poolId);
-};
+// Mock price data
+export const mockPrices: PriceData[] = [
+  {
+    symbol: 'ETH',
+    price: 3000,
+    timestamp: Date.now(),
+    change24h: -5
+  },
+  {
+    symbol: 'BTC',
+    price: 50000,
+    timestamp: Date.now(),
+    change24h: 2
+  },
+  {
+    symbol: 'AVAX',
+    price: 30,
+    timestamp: Date.now(),
+    change24h: -3
+  },
+  {
+    symbol: 'SOL',
+    price: 100,
+    timestamp: Date.now(),
+    change24h: 1
+  },
+  {
+    symbol: 'MATIC',
+    price: 1,
+    timestamp: Date.now(),
+    change24h: -2
+  },
+  {
+    symbol: 'LINK',
+    price: 15,
+    timestamp: Date.now(),
+    change24h: 0.5
+  },
+  {
+    symbol: 'UNI',
+    price: 8,
+    timestamp: Date.now(),
+    change24h: -1
+  },
+  {
+    symbol: 'AAVE',
+    price: 120,
+    timestamp: Date.now(),
+    change24h: 3
+  }
+];
