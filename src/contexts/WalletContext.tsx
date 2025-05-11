@@ -37,7 +37,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       setIsLoading(true);
       
       // Check if ArgentX is installed
-      if (typeof window !== 'undefined' && !window?.starknet) {
+      if (typeof window !== 'undefined' && !window.starknet) {
         throw new Error('ArgentX wallet not found. Please install ArgentX extension');
       }
       

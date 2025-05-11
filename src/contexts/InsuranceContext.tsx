@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from "sonner";
 import { 
@@ -241,7 +240,7 @@ export const InsuranceProvider: React.FC<{ children: ReactNode }> = ({ children 
         if (l.id === liquidityId) {
           return {
             ...l,
-            status: 'withdrawn'
+            status: 'withdrawn' as const  // Using "as const" to ensure correct type
           };
         }
         return l;
@@ -299,7 +298,7 @@ export const InsuranceProvider: React.FC<{ children: ReactNode }> = ({ children 
         if (c.id === coverageId) {
           return {
             ...c,
-            status: 'claimed'
+            status: 'claimed' as const  // Using "as const" to ensure correct type
           };
         }
         return c;
