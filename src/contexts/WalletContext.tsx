@@ -68,8 +68,10 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       window.starknet.on('accountsChanged', handleAccountsChanged);
       
       return () => {
-        // Remove event listeners on cleanup
-        window.starknet.removeListener('accountsChanged', handleAccountsChanged);
+        // Remove event listeners on cleanup - using the correct 'off' method
+        if (window.starknet) {
+          window.starknet.off('accountsChanged', handleAccountsChanged);
+        }
       };
     }
   }, [walletState.connected]);

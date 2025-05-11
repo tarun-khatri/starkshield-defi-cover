@@ -5,7 +5,7 @@ interface StarknetWindowObject {
   getAccounts: () => Promise<any[]>;
   provider: any;
   on: (event: string, handler: any) => void;
-  removeListener: (event: string, handler: any) => void;
+  off: (event: string, handler: any) => void; // Correct method for removing listeners
 }
 
 declare global {
